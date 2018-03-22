@@ -4,8 +4,15 @@
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
+// Growl
+@import "vendor/jquery.growl";
+
 .container {
   max-width: 800px;
+}
+
+.btn:focus {
+  box-shadow: none !important;
 }
 
 .loader {

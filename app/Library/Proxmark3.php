@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Library;
+use App\Library\Tags\Hid;
+use App\Library\Tags\Io;
+use App\Library\Tags\Em410x;
+use App\Library\Tags\Unsupported;
 
 class Proxmark3
 {
@@ -70,7 +74,7 @@ class Proxmark3
         $results = [];
 
         $search = $this->executeCommand('lf search');
-        abort_unless($this->connected, 500, 'Failed to establish a connection to the scanner!');
+        abort_unless($this->connected, 500, 'Could not connect to the scanner. Is it plugged in?');
 
         $matches = [];
         preg_match('/valid (.*) found/im', $search["result"], $matches);
@@ -78,7 +82,7 @@ class Proxmark3
             array_shift($matches);
             foreach ($matches as $match) {
                 if ($match === 'T55xx Chip') continue;
-                $results[] = $match;
+                $results[] = $this->tagForMatch($match, $search["result"]);
             }
         }
 
@@ -87,6 +91,67 @@ class Proxmark3
 
     public function searchHighFrequency() {
 
+    }
+
+    /**
+     * Given a result from a search, return an instance of the appropriate tag.
+     * @param  string $match The matched tag key.
+     * @param  string $result The full-text from the search result.
+     * @return Tag An instance of a tag.
+     */
+    public function clone($type, $identifier) {
+        $response = ['success' => false, 'result' => 'There was an issue with the cloning process.'];
+        $tag = null;
+
+        switch($type) {
+            case Hid::$key:
+                $tag = new Hid($identifier);
+                break;
+            case Io::$key:
+                $tag = new Io($identifier);
+                break;
+            case Em410x::$key:
+                $tag = new Em410x($identifier);
+                break;
+            default:
+                $tag = new Unsupported($identifier);
+                break;
+        }
+
+        $clone = $tag->clone($this);
+        if ($clone) {
+            $response['success'] = true;
+            $response['result'] = 'The clone command was issued successfully!';
+        }
+
+        return $response;
+    }
+
+    /**
+     * Given a result from a search, return an instance of the appropriate tag.
+     * @param  string $match The matched tag key.
+     * @param  string $result The full-text from the search result.
+     * @return Tag An instance of a tag.
+     */
+    public function tagForMatch($match, $result) {
+        $tag = null;
+
+        switch($match) {
+            case Hid::$key:
+                $tag = Hid::tagFromResult($result);
+                break;
+            case Io::$key:
+                $tag = Io::tagFromResult($result);
+                break;
+            case Em410x::$key:
+                $tag = Em410x::tagFromResult($result);
+                break;
+            default:
+                $tag = Unsupported::tagFromResult($result);
+                break;
+        }
+
+        return $tag;
     }
 
 }

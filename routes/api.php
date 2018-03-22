@@ -22,3 +22,7 @@ Route::get('/scanner/search/{type}', function(Proxmark3 $scanner, $type) {
     if ($type === 'lf') return $scanner->searchLowFrequency();
     return $scanner->searchHighFrequency();
 });
+
+Route::post('/scanner/clone', function(Proxmark3 $scanner, Request $request) {
+    return $scanner->clone($request->get('type'), $request->get('identifier'));
+});

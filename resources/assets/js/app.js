@@ -6,6 +6,7 @@
  */
 
 require('./bootstrap');
+require('./vendor/jquery.growl');
 
 window.Vue = require('vue');
 
@@ -19,5 +20,56 @@ Vue.component('Scanner', require('./components/Scanner.vue'));
 Vue.component('ScanResult', require('./components/ScanResult.vue'));
 
 const app = new Vue({
-  el: '#app'
+  el: '#app',
+  data: {
+    cloneTarget: {}
+  },
+  methods: {
+    promptClone(target) {
+      this.cloneTarget = target;
+    },
+    clone() {
+      axios.post('/api/scanner/clone', this.cloneTarget).then((response) => {
+        if (response.data.success) {
+          this.addMessage({
+            title: 'Success!',
+            message: response.data.result,
+            type: 'success',
+            duration: 3000
+          })
+        }
+      }).catch((error) => {
+        this.addMessage({
+          title: 'Oh no!',
+          message: error.response.data.message,
+          type: 'danger',
+          duration: 3000
+        });
+      });
+    },
+    addMessage({ title='', message='', type='', duration=0, location='br' }) {
+      let style = 'default';
+      const styleMap = {
+        'default': 'default',
+        'success': 'notice',
+        'danger': 'error',
+        'warning': 'warning'
+      };
+      if (type in styleMap) style = styleMap[type];
+
+      let opts = {
+        style: style,
+        title: title,
+        message: message,
+        location: location,
+        fixed: true
+      };
+      if (duration > 0) {
+        opts.duration = duration;
+        opts.fixed = false;
+      }
+
+      $.growl(opts);
+    }
+  }
 });

@@ -23,7 +23,7 @@
             </div>
         </div>
         <ul class="list-group">
-            <ScanResult v-bind:result="result" v-for="result, index in results" v-bind:key="index" />
+            <ScanResult v-bind:prompt-clone="promptClone" v-bind:result="result" v-for="result, index in results" v-bind:key="index" />
         </ul>
     </section>
 </template>
@@ -36,6 +36,7 @@
                 isScanning: false
             }
         },
+        props: ['addMessage', 'promptClone'],
         methods: {
             search(type) {
                 this.isScanning = true;
@@ -43,14 +44,22 @@
                 axios.get('/api/scanner/search/' + type).then((response) => {
                     this.isScanning = false;
                     this.results = response.data;
-
                     if (this.results.length === 0) {
-                        // TODO: Add message for no fobs found.
+                        this.addMessage({
+                            title: 'No results found!',
+                            message: 'Try repositioning your fob on the scanner or try a ' + (type == 'lf' ? 'high' : 'low') + ' frequency scan.',
+                            type: 'warning',
+                            duration: 3000
+                        });
                     }
                 }).catch((error) => {
                     this.isScanning = false;
-                    console.log(error);
-                    alert(error.response.data.message);
+                    this.addMessage({
+                        title: 'Oh no!',
+                        message: error.response.data.message,
+                        type: 'danger',
+                        duration: 3000
+                    });
                 });
             }
         }
