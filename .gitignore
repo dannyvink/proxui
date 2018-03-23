@@ -1,6 +1,8 @@
 /node_modules
 /public/hot
 /public/storage
+/public/proxmark3.log
+/public/.history
 /storage/*.key
 /vendor
 /.idea
