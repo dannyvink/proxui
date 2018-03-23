@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Library\Proxmark3;
+use App\History;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,16 @@ Route::get('/scanner/search/{type}', function(Proxmark3 $scanner, $type) {
 
 Route::post('/scanner/clone', function(Proxmark3 $scanner, Request $request) {
     return $scanner->clone($request->get('type'), $request->get('identifier'));
+});
+
+Route::get('/history', function() {
+    return History::all();
+});
+
+Route::put('/history/{id}', function(Request $request, $id) {
+    $history = History::findOrFail($id);
+    $newName = !empty($request->get('name')) ? $request->get('name') : $history->identifier;
+    $history->name = $newName;
+    $history->save();
+    return $history;
 });

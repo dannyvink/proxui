@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('scan');
 });
+
+Route::get('/history', function () {
+    return view('history');
+});

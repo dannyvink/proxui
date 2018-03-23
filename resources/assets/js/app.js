@@ -16,8 +16,9 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('Scanner', require('./components/Scanner.vue'));
-Vue.component('ScanResult', require('./components/ScanResult.vue'));
+Vue.component('scanner', require('./components/scanner.vue'));
+Vue.component('result', require('./components/result.vue'));
+Vue.component('history', require('./components/history.vue'));
 
 const app = new Vue({
   el: '#app',

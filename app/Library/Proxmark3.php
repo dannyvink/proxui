@@ -5,6 +5,7 @@ use App\Library\Tags\Hid;
 use App\Library\Tags\Io;
 use App\Library\Tags\Em410x;
 use App\Library\Tags\Unsupported;
+use App\History;
 
 class Proxmark3
 {
@@ -77,12 +78,20 @@ class Proxmark3
         abort_unless($this->connected, 500, 'Could not connect to the scanner. Is it plugged in?');
 
         $matches = [];
-        preg_match('/valid (.*) found/im', $search["result"], $matches);
+        preg_match('/valid (.*) found/im', $search['result'], $matches);
         if ($matches) {
             array_shift($matches);
             foreach ($matches as $match) {
                 if ($match === 'T55xx Chip') continue;
-                $results[] = $this->tagForMatch($match, $search["result"]);
+                $tag = $this->tagForMatch($match, $search['result']);
+                $history = History::firstOrNew([
+                    'type' => $tag->type,
+                    'identifier' => $tag->identifier
+                ]);
+                if (empty($history->name)) $history->name = $tag->identifier;
+                $history->scan = $search['result'];
+                $history->save();
+                $results[] = $history;
             }
         }
 
@@ -100,31 +109,13 @@ class Proxmark3
      * @return Tag An instance of a tag.
      */
     public function clone($type, $identifier) {
-        $response = ['success' => false, 'result' => 'There was an issue with the cloning process.'];
-        $tag = null;
-
-        switch($type) {
-            case Hid::$key:
-                $tag = new Hid($identifier);
-                break;
-            case Io::$key:
-                $tag = new Io($identifier);
-                break;
-            case Em410x::$key:
-                $tag = new Em410x($identifier);
-                break;
-            default:
-                $tag = new Unsupported($identifier);
-                break;
-        }
-
+        $tag = $this->tagFromIdentifier($type, $identifier);
         $clone = $tag->clone($this);
         if ($clone) {
-            $response['success'] = true;
-            $response['result'] = 'The clone command was issued successfully!';
+            return ['success' => true, 'result' => 'The clone command was issued successfully!'];
         }
 
-        return $response;
+        abort(500, 'There was an issue with the cloning process!');
     }
 
     /**
@@ -148,6 +139,33 @@ class Proxmark3
                 break;
             default:
                 $tag = Unsupported::tagFromResult($result);
+                break;
+        }
+
+        return $tag;
+    }
+
+    /**
+     * Return a tag instance from an identifier with a type.
+     * @param  string $type       The type of tag.
+     * @param  string $identifier The identifier for the tag.
+     * @return Tag                An instance of a tag.
+     */
+    public static function tagFromIdentifier($type, $identifier) {
+        $tag = null;
+
+        switch($type) {
+            case Hid::$key:
+                $tag = new Hid($identifier);
+                break;
+            case Io::$key:
+                $tag = new Io($identifier);
+                break;
+            case Em410x::$key:
+                $tag = new Em410x($identifier);
+                break;
+            default:
+                $tag = new Unsupported($identifier);
                 break;
         }
 

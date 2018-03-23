@@ -19,8 +19,8 @@
 
             <div class="collapse navbar-collapse" id="main-nav">
               <ul class="navbar-nav ml-auto">
-                <li class="nav-item active"><a class="nav-link" href="#">Scan Fob</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">History</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Scan Fob</a></li>
+                <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Terminal</a></li>
               </ul>
             </div>
