@@ -12,7 +12,7 @@
       <header id="site-header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <div class="container">
-            <a class="navbar-brand" href="#">ProxUI</a>
+            <a class="navbar-brand" href="/">ProxUI</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -21,7 +21,7 @@
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="/">Scan Fob</a></li>
                 <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Terminal</a></li>
+                <li class="nav-item"><a class="nav-link" href="/terminal">Terminal</a></li>
               </ul>
             </div>
           </div>

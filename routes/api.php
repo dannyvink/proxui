@@ -32,6 +32,10 @@ Route::get('/history', function() {
     return History::all();
 });
 
+Route::post('/terminal', function(Proxmark3 $scanner, Request $request) {
+    return $scanner->executeCommand($request->get('input'), true);
+});
+
 Route::put('/history/{id}', function(Request $request, $id) {
     $history = History::findOrFail($id);
     $newName = !empty($request->get('name')) ? $request->get('name') : $history->identifier;

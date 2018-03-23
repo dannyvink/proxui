@@ -19,6 +19,7 @@ window.Vue = require('vue');
 Vue.component('scanner', require('./components/scanner.vue'));
 Vue.component('result', require('./components/result.vue'));
 Vue.component('history', require('./components/history.vue'));
+Vue.component('terminal', require('./components/terminal.vue'));
 
 const app = new Vue({
   el: '#app',

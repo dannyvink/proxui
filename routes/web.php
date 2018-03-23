@@ -18,3 +18,7 @@ Route::get('/', function () {
 Route::get('/history', function () {
     return view('history');
 });
+
+Route::get('/terminal', function () {
+    return view('terminal');
+});

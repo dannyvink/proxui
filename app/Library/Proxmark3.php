@@ -55,13 +55,20 @@ class Proxmark3
      * @param string $command The command to run on the scanner.
      * @return array
      */
-    public function executeCommand($command) {
+    public function executeCommand($command, $trimHeader = false) {
         $response = ['success' => true, 'result' => ''];
 
         $response['result'] = shell_exec('proxmark3 ' . $this->port . ' -c "' . $command . '"');
         if (preg_match('/error: invalid serial port/im', $response['result'])) {
             $this->connected = false;
             $response['success'] = false;
+        }
+
+        if ($trimHeader) {
+            $split = explode("proxmark3>", $response["result"]);
+            if (count($split) > 1) {
+                $response['result'] = 'proxmark3>' . $split[1];
+            }
         }
 
         return $response;

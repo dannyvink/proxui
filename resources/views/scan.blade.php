@@ -5,6 +5,6 @@
 @section('content')
     <div class="card">
         <h3 class="card-header">Scan Fob</h3>
-        <Scanner v-bind:prompt-clone="promptClone" v-bind:add-message="addMessage" />
+        <scanner v-bind:prompt-clone="promptClone" v-bind:add-message="addMessage" />
     </div>
 @endsection
