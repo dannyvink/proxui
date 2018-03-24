@@ -12,7 +12,7 @@
 	@if ($updateable)
 	    Update Available!<br /><a href="/update" class="btn btn-warning btn-sm">Perform Update</a>
 	@else
-	    Last Check For Update: {{ $last_update_check }}
+	    <small>Last Update Check: {{ $last_update_check }}</small>
 	@endif
     </div>
 @endsection
