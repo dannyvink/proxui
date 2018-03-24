@@ -19,7 +19,7 @@ Route::get('/', function () {
         if (preg_match("/behind (.+) by/im", $result)) {
             $updateable = true;
         }
-        session('checked_for_update', date("Y-m-d H:i:s"));
+        session(['checked_for_update' => date("Y-m-d H:i:s")]);
     }
     return view('scan', ['updateable' => $updateable, 'last_update_check' => session('checked_for_update')]);
 });
