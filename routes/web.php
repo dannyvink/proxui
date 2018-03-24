@@ -12,10 +12,10 @@
 */
 
 Route::get('/', function () {
+    $updateable = false;
     if (!session()->has('checked_for_update')) {
         shell_exec('git fetch');
         $result = shell_exec('git status');
-        $updateable = false;
         if (preg_match("/behind (.+) by/im", $result)) {
             $updateable = true;
         }
