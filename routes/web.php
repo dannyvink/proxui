@@ -12,7 +12,19 @@
 */
 
 Route::get('/', function () {
-    return view('scan');
+    shell_exec('git fetch');
+    $result = shell_exec('git status');
+    $updateable = false;
+    if (preg_match("/behind (.+) by/im", $result)) {
+        $updateable = true;
+    }
+    return view('scan', ['updateable' => $updateable]);
+});
+
+Route::get('/update', function() {
+    $pull = shell_exec('cd ' . base_path() . ' && git pull');
+    $migrate = shell_exec('cd ' . base_path() . ' && php artisan migrate');
+    return '<pre>' . $pull . '</pre><pre>' . $migrate . '</pre><a href="/">Done</a>';
 });
 
 Route::get('/history', function () {
