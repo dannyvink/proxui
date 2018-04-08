@@ -32,14 +32,24 @@ Route::get('/history', function() {
     return History::all();
 });
 
-Route::post('/terminal', function(Proxmark3 $scanner, Request $request) {
-    return $scanner->executeCommand($request->get('input'), true);
-});
-
 Route::put('/history/{id}', function(Request $request, $id) {
     $history = History::findOrFail($id);
     $newName = !empty($request->get('name')) ? $request->get('name') : $history->identifier;
     $history->name = $newName;
     $history->save();
     return $history;
+});
+
+Route::post('/terminal', function(Proxmark3 $scanner, Request $request) {
+    return $scanner->executeCommand($request->get('input'), true);
+});
+
+Route::post('/wifi', function(Proxmark3 $scanner, Request $request) {
+    $result = false;
+    if ($scanner->connected && $request->has('ssid') && $request->has('password')) {
+        $file = "/etc/wpa_supplicant/wpa_supplicant-" . config('scanner.wifi_interface') . ".conf";
+        $result = shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" >> ' . $file);
+        shell_exec("sudo wpa_supplicant -B -i interface -c " . $file);
+    }
+    return ['result' => $result];
 });

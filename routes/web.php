@@ -37,3 +37,7 @@ Route::get('/history', function () {
 Route::get('/terminal', function () {
     return view('terminal');
 });
+
+Route::get('/wifi', function () {
+    return view('wifi');
+});

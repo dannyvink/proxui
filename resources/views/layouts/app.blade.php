@@ -22,6 +22,7 @@
                 <li class="nav-item"><a class="nav-link" href="/">Scan Fob</a></li>
                 <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                 <li class="nav-item"><a class="nav-link" href="/terminal">Terminal</a></li>
+                <li class="nav-item"><a class="nav-link" href="/wifi">Wi-Fi</a></li>
               </ul>
             </div>
           </div>

@@ -20,6 +20,7 @@ Vue.component('scanner', require('./components/scanner.vue'));
 Vue.component('result', require('./components/result.vue'));
 Vue.component('history', require('./components/history.vue'));
 Vue.component('terminal', require('./components/terminal.vue'));
+Vue.component('wifi', require('./components/wifi.vue'));
 
 const app = new Vue({
   el: '#app',

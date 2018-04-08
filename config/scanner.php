@@ -13,6 +13,17 @@ return [
     |
     */
 
-    'port' => env('SCANNER_PORT')
+    'port' => env('SCANNER_PORT'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Wi-Fi Interface
+    |--------------------------------------------------------------------------
+    |
+    | This option should be set to the correct Wi-Fi interface on the device.
+    |
+    */
+
+    'wifi_interface' => env('WIFI_INTERFACE', 'wlan1')
 
 ];
