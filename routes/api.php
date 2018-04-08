@@ -51,7 +51,10 @@ Route::post('/wifi', function(Request $request) {
         shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" > ' . $file);
         shell_exec("sudo ifdown " . config('scanner.wifi_interface'));
         shell_exec("sudo ifup " . config('scanner.wifi_interface'));
-        $result = file_get_contents("https://api.ipify.org/?format=json");
+        $result = @file_get_contents("https://api.ipify.org/?format=json");
+        if (!empty($result)) {
+            $result = json_decode($result)["ip"];
+        }
     }
     return ['result' => $result];
 });
