@@ -58,7 +58,7 @@ Route::post('/wifi', function(Request $request) {
     if ($request->has('ssid') && $request->has('password')) {
         $file = "/etc/wpa_supplicant/wpa_supplicant-" . config('scanner.wifi_interface') . ".conf";
         shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" > ' . $file);
-        shell_exec("sudo reboot");
+        shell_exec("wpa_cli -i " . config('scanner.wifi_interface') . " reconfigure");
 
         $result = @file_get_contents("https://api.ipify.org/?format=json");
         if (!empty($result)) {
