@@ -48,8 +48,10 @@ Route::post('/wifi', function(Request $request) {
     $result = false;
     if ($request->has('ssid') && $request->has('password')) {
         $file = "/etc/wpa_supplicant/wpa_supplicant-" . config('scanner.wifi_interface') . ".conf";
-        $result = shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" > ' . $file);
-        shell_exec("sudo wpa_supplicant -B -i interface -c " . $file);
+        shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" > ' . $file);
+        shell_exec("sudo ifdown " . config('scanner.wifi_interface'));
+        shell_exec("sudo ifup " . config('scanner.wifi_interface'));
+        $result = file_get_contents("https://api.ipify.org/?format=json");
     }
     return ['result' => $result];
 });
