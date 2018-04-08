@@ -49545,24 +49545,57 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['addMessage'],
     data: function data() {
         return {
+            rebooting: false,
+            checkInterval: null,
             ssid: '',
             password: '',
-            ip_address: null
+            ip_address: null,
+            lastRebootCheck: Date.now()
         };
+    },
+    mounted: function mounted() {
+        this.getIp();
     },
 
     methods: {
-        save: function save() {
-            var _this = this;
-
+        getIp: function getIp() {
             var ref = this;
+            axios.get('/api/ip').then(function (response) {
+                ref.ip_address = response.data.result;
+            }).catch(function (error) {
+                ref.ip_address = null;
+            });
+        },
+        save: function save() {
+            var ref = this;
+
+            this.rebooting = true;
+            this.checkInterval = setInterval(function () {
+                axios.get('/').then(function (response) {
+                    clearInterval(ref.checkInterval);
+                    ref.checkInterval = null;
+                    ref.rebooting = false;
+                }).catch(function (error) {
+                    ref.lastRebootCheck = Date.now();
+                });
+            }, 10000);
+
             axios.post('/api/wifi', { ssid: this.ssid, password: this.password }).then(function (response) {
-                _this.addMessage({
+                ref.rebooting = false;
+                clearInterval(ref.checkInterval);
+                ref.checkInterval = null;
+                ref.ip_address = response.data.result;
+                ref.addMessage({
                     title: 'Success!',
                     message: 'Your Wi-Fi settings have been saved!',
                     type: 'success',
@@ -49584,67 +49617,80 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("section", [
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.ssid,
-          expression: "ssid"
-        }
-      ],
-      staticClass: "form-control form-control-lg",
-      attrs: { type: "text", placeholder: "SSID" },
-      domProps: { value: _vm.ssid },
-      on: {
-        input: function($event) {
-          if ($event.target.composing) {
-            return
-          }
-          _vm.ssid = $event.target.value
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.password,
-          expression: "password"
-        }
-      ],
-      staticClass: "form-control form-control-lg",
-      attrs: { type: "text", placeholder: "Password" },
-      domProps: { value: _vm.password },
-      on: {
-        input: function($event) {
-          if ($event.target.composing) {
-            return
-          }
-          _vm.password = $event.target.value
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-outline-primary btn-lg btn-block",
-        attrs: { type: "button" },
-        on: { click: _vm.save }
-      },
-      [_vm._v("Save")]
-    ),
-    _vm._v(" "),
-    _vm.ip_address
-      ? _c("div", { staticClass: "p-4 text-center" }, [
-          _c("div", [
-            _vm._v("Your current IP Address is: "),
-            _c("code", [_vm._v(_vm._s(_vm.ip_address))])
-          ])
+    !_vm.rebooting
+      ? _c("div", [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.ssid,
+                expression: "ssid"
+              }
+            ],
+            staticClass: "form-control form-control-lg",
+            attrs: { type: "text", placeholder: "SSID" },
+            domProps: { value: _vm.ssid },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.ssid = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.password,
+                expression: "password"
+              }
+            ],
+            staticClass: "form-control form-control-lg",
+            attrs: { type: "text", placeholder: "Password" },
+            domProps: { value: _vm.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.password = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-primary btn-lg btn-block",
+              attrs: { type: "button" },
+              on: { click: _vm.save }
+            },
+            [_vm._v("Save")]
+          ),
+          _vm._v(" "),
+          _vm.ip_address
+            ? _c("div", { staticClass: "card-body text-center" }, [
+                _vm._v("\n            Your current IP Address is: "),
+                _c("code", [_vm._v(_vm._s(_vm.ip_address))])
+              ])
+            : _vm._e()
         ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.rebooting
+      ? _c(
+          "div",
+          {
+            staticClass: "card-body text-center",
+            attrs: { title: _vm.lastRebootCheck }
+          },
+          [_vm._v("\n        The device is rebooting...\n    ")]
+        )
       : _vm._e()
   ])
 }
