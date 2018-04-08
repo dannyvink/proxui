@@ -53,7 +53,7 @@ Route::post('/wifi', function(Request $request) {
         shell_exec("sudo ifup " . config('scanner.wifi_interface'));
         $result = @file_get_contents("https://api.ipify.org/?format=json");
         if (!empty($result)) {
-            $result = json_decode($result)["ip"];
+            $result = json_decode($result, true)["ip"];
         }
     }
     return ['result' => $result];
