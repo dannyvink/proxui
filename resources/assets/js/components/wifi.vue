@@ -23,6 +23,7 @@
             save() {
                 const ref = this;
                 axios.post('/api/wifi', { ssid: this.ssid, password: this.password }).then((response) => {
+                    ref.ip_address = response.data.result;
                     this.addMessage({
                         title: 'Success!',
                         message: 'Your Wi-Fi settings have been saved!',
