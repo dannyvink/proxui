@@ -26,8 +26,9 @@ Route::get('/', function () {
 
 Route::get('/update', function() {
     $pull = shell_exec('cd ' . base_path() . ' && git pull');
+    $npm = shell_exec('cd ' . base_path() . ' && npm run prod');
     $migrate = shell_exec('cd ' . base_path() . ' && php artisan migrate');
-    return '<pre>' . $pull . '</pre><pre>' . $migrate . '</pre><a href="/">Done</a>';
+    return '<pre>' . $pull . '</pre><pre>' . $npm . '</pre><pre>' . $migrate . '</pre><a href="/">Done</a>';
 });
 
 Route::get('/history', function () {
