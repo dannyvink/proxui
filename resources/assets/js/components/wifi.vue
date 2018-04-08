@@ -11,6 +11,7 @@
 
 <script>
     export default {
+        props: ['addMessage'],
         data() {
             return {
                 ssid: '',
@@ -18,27 +19,18 @@
                 ip_address: null
             }
         },
-        mounted() {
-            this.checkExternalIp();
-            setInterval(() => {
-                this.checkExternalIp();
-            }, 10000);
-        },
         methods: {
             save() {
                 const ref = this;
                 axios.post('/api/wifi', { ssid: this.ssid, password: this.password }).then((response) => {
-                    ref.checkExternalIp();
+                    this.addMessage({
+                        title: 'Success!',
+                        message: 'Your Wi-Fi settings have been saved!',
+                        type: 'success',
+                        duration: 3000
+                    });
                 }).catch((error) => {
                     console.log(error);
-                });
-            },
-            checkExternalIp() {
-                const ref = this;
-                axios.get('https://api.ipify.org?format=json').then((response) => {
-                    ref.ip_address = response.data.ip;
-                }).catch((error) => {
-                    ref.ip_address = null;
                 });
             }
         }
