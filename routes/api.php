@@ -44,9 +44,9 @@ Route::post('/terminal', function(Proxmark3 $scanner, Request $request) {
     return $scanner->executeCommand($request->get('input'), true);
 });
 
-Route::post('/wifi', function(Proxmark3 $scanner, Request $request) {
+Route::post('/wifi', function(Request $request) {
     $result = false;
-    if ($scanner->connected && $request->has('ssid') && $request->has('password')) {
+    if ($request->has('ssid') && $request->has('password')) {
         $file = "/etc/wpa_supplicant/wpa_supplicant-" . config('scanner.wifi_interface') . ".conf";
         $result = shell_exec('sudo wpa_passphrase "' . $request->get('ssid') . '" "' . $request->get('password') . '" >> ' . $file);
         shell_exec("sudo wpa_supplicant -B -i interface -c " . $file);
