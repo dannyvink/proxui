@@ -48,24 +48,36 @@
                         clearInterval(ref.checkInterval);
                         ref.checkInterval = null;
                         ref.rebooting = false;
+                        ref.addMessage({
+                            title: 'Success!',
+                            message: 'Your Wi-Fi settings have been saved!',
+                            type: 'success',
+                            duration: 3000
+                        });
                     }).catch((error) => {
                         ref.lastRebootCheck = Date.now();
                     })
                 }, 10000);
 
-                axios.post('/api/wifi', { ssid: this.ssid, password: this.password }).then((response) => {
-                    ref.rebooting = false;
-                    clearInterval(ref.checkInterval);
-                    ref.checkInterval = null;
-                    ref.ip_address = response.data.result;
+                axios.post('/api/wifi', { ssid: this.ssid, password: this.password }).then((response) => {                   
                     ref.addMessage({
-                        title: 'Success!',
-                        message: 'Your Wi-Fi settings have been saved!',
-                        type: 'success',
+                        title: 'Uh oh!',
+                        message: 'Rebooting the device failed! Please manually reboot.',
+                        type: 'error',
                         duration: 3000
                     });
                 }).catch((error) => {
-                    console.log(error);
+                    if (error.response.status != 502) {
+                        console.log(error);
+                        ref.addMessage({
+                            title: 'Uh oh!',
+                            message: 'Something unexpected happened! Check the console log for details.',
+                            type: 'error',
+                            duration: 3000
+                        });
+                    } else {
+                        console.log('The device is rebooting...');
+                    }
                 });
             }
         }
